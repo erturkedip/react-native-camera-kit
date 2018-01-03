@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Patterns;
+import android.os.Environment;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -50,8 +51,8 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         this.path = path;
     }
 
-    public SaveImageTask(String bitmapUrl, Context context, Promise promise, boolean saveToCameraRoll) {
-        this(context, promise, saveToCameraRoll);
+    public SaveImageTask(String bitmapUrl, Context context, Promise promise, boolean saveToCameraRoll, String fileName, String path) {
+        this(context, promise, saveToCameraRoll, fileName, path);
         this.bitmapUrl = bitmapUrl;
         if (this.bitmapUrl != null) {
             this.bitmapUrl = this.bitmapUrl.replace("file://","");
@@ -133,7 +134,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         return imageInfo;
     }
 
-    private WritableMap createDirectoryAndSaveFile(Bitmap imageToSave, String fileName, String path) {
+    private WritableMap createDirectoryAndSaveFile(Bitmap image, String fileName, String path) {
 
         File direct = new File(Environment.getExternalStorageDirectory() + "/" + path);
 
@@ -150,7 +151,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
 
         try {
             FileOutputStream out = new FileOutputStream(imageFile);
-            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
         } catch (Exception e) {
