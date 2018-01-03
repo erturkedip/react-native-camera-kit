@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Patterns;
 import android.os.Environment;
+import android.content.ContentValues;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -142,7 +143,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             direct.mkdirs();
         }
 
-        File imageFile = new File(direct, fileName);
+        File imageFile = new File(direct.getAbsolutePath() + "/" + fileName);
 
         if (imageFile.exists()) {
             imageFile.delete();
@@ -153,6 +154,20 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
+
+            ContentValues image_cv = new ContentValues();
+            image_cv.put(MediaStore.Images.Media.TITLE, "Sosyal Doku");
+            image_cv.put(MediaStore.Images.Media.DISPLAY_NAME, imageFile);
+            image_cv.put(MediaStore.Images.Media.DESCRIPTION, "Saha Tespit Belgesi");
+            image_cv.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
+            image_cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
+            image_cv.put(MediaStore.Images.Media.ORIENTATION, 0);
+            File parent = imageFile.getParentFile();
+            image_cv.put(MediaStore.Images.ImageColumns.BUCKET_ID, parent.toString().toLowerCase().hashCode());
+            image_cv.put(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, parent.getName().toLowerCase());
+            image_cv.put(MediaStore.Images.Media.SIZE, imageFile.length());
+            image_cv.put(MediaStore.Images.Media.DATA, imageFile.getAbsolutePath());
+            Uri result = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, image_cv);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "Error accessing file: " + e.getMessage());
