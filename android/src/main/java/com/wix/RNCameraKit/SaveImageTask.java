@@ -159,7 +159,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             imageFile = null;
         }
 
-        return (imageFile != null) ? createImageInfo(Uri.fromFile(imageFile).toString(), imageFile.getAbsolutePath(), fileName, imageFile.length(), image.getWidth(), image.getHeight()) : null;
+        return (imageFile != null) ? createImageInfo(imageFile.getAbsolutePath(), imageFile.getAbsolutePath(), fileName, imageFile.length(), image.getWidth(), image.getHeight()) : null;
     }
 
     private WritableMap saveToMediaStore(Bitmap image) {
