@@ -278,7 +278,7 @@ export default class CameraScreenBase extends Component {
         const shouldSaveToCameraRoll = !this.props.allowCaptureRetake;
         const fileName = this.props.fileName;
         const path = !this.props.path;
-        const image = await this.camera.capture(shouldSaveToCameraRoll, file);
+        const image = await this.camera.capture(shouldSaveToCameraRoll, fileName, path);
 
         if (this.props.allowCaptureRetake) {
             this.setState({imageCaptured: image});
