@@ -136,14 +136,14 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
 
     private WritableMap createDirectoryAndSaveFile(Bitmap image, String fileName, String path) {
 
-        File direct = new File(Environment.getExternalStorageDirectory() + "/" + path);
+        File direct = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + path);
 
-        if (!direct.exists()) {
+        /*if (!direct.exists()) {
             File customDir = new File("/sdcard/"+ path +"/");
             customDir.mkdirs();
-        }
+        }*/
 
-        File imageFile = new File(new File("/sdcard/"+ path +"/"), fileName);
+        File imageFile = new File(direct, fileName);
 
         if (imageFile.exists()) {
             imageFile.delete();
