@@ -308,7 +308,7 @@ public class NativeGalleryModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void saveImageURLToCameraRoll(String imageUrl, final Promise promise) {
-        new SaveImageTask(imageUrl, getReactApplicationContext(), promise, true).execute();
+        new SaveImageTask(imageUrl, getReactApplicationContext(), promise, true, null, null).execute();
     }
 
     @ReactMethod
