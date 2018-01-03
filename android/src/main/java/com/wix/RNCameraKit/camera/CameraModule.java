@@ -106,8 +106,8 @@ public class CameraModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void capture(boolean saveToCameraRoll, final Promise promise) {
-        new Capture(getReactApplicationContext(), saveToCameraRoll).execute(promise);
+    public void capture(boolean saveToCameraRoll, String fileName, String path, final Promise promise) {
+        new Capture(getReactApplicationContext(), saveToCameraRoll, fileName, path).execute(promise);
     }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {

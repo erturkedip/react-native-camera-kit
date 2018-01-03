@@ -38,12 +38,16 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
     private final Context context;
     private final Promise promise;
     private boolean saveToCameraRoll;
+    private String fileName;
+    private String path;
     private String bitmapUrl = null;
 
-    public SaveImageTask(Context context, Promise promise, boolean saveToCameraRoll) {
+    public SaveImageTask(Context context, Promise promise, boolean saveToCameraRoll, String fileName, String path) {
         this.context = context;
         this.promise = promise;
         this.saveToCameraRoll = saveToCameraRoll;
+        this.fileName = fileName;
+        this.path = path;
     }
 
     public SaveImageTask(String bitmapUrl, Context context, Promise promise, boolean saveToCameraRoll) {
@@ -108,7 +112,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             return null;
         }
 
-        WritableMap imageInfo = saveToCameraRoll ? saveToMediaStore(image) : saveTempImageFile(image);
+        WritableMap imageInfo = saveToCameraRoll ? saveToMediaStore(image) : createDirectoryAndSaveFile(image, fileName, path);
         if (imageInfo == null)
             promise.reject("CameraKit", "failed to save image to MediaStore");
         else {
@@ -127,6 +131,36 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         imageInfo.putInt("width", width);
         imageInfo.putInt("height", height);
         return imageInfo;
+    }
+
+    private WritableMap createDirectoryAndSaveFile(Bitmap imageToSave, String fileName, String path) {
+
+        File direct = new File(Environment.getExternalStorageDirectory() + "/" + path);
+
+        if (!direct.exists()) {
+            File customDir = new File("/sdcard/"+ path +"/");
+            customDir.mkdirs();
+        }
+
+        File imageFile = new File(new File("/sdcard/"+ path +"/"), fileName);
+
+        if (imageFile.exists()) {
+            imageFile.delete();
+        }
+
+        try {
+            FileOutputStream out = new FileOutputStream(imageFile);
+            imageToSave.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } catch (IOException e){
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            imageFile = null;
+        }
+
+        return (imageFile != null) ? createImageInfo(Uri.fromFile(imageFile).toString(), imageFile.getAbsolutePath(), fileName, imageFile.length(), image.getWidth(), image.getHeight()) : null;
     }
 
     private WritableMap saveToMediaStore(Bitmap image) {
