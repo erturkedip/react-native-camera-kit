@@ -138,10 +138,9 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
 
         File direct = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + path);
 
-        /*if (!direct.exists()) {
-            File customDir = new File("/sdcard/"+ path +"/");
-            customDir.mkdirs();
-        }*/
+        if (!direct.exists()) {
+            direct.mkdirs();
+        }
 
         File imageFile = new File(direct, fileName);
 
