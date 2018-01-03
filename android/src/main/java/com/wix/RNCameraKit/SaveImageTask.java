@@ -156,7 +156,6 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             out.close();
         } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e){
             Log.d(TAG, "Error accessing file: " + e.getMessage());
             imageFile = null;
         }
