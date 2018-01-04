@@ -157,7 +157,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
 
             ContentValues image_cv = new ContentValues();
             image_cv.put(MediaStore.Images.Media.TITLE, "Sosyal Doku");
-            image_cv.put(MediaStore.Images.Media.DISPLAY_NAME, imageFile);
+            image_cv.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
             image_cv.put(MediaStore.Images.Media.DESCRIPTION, "Saha Tespit Belgesi");
             image_cv.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
             image_cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
@@ -167,7 +167,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             image_cv.put(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, parent.getName().toLowerCase());
             image_cv.put(MediaStore.Images.Media.SIZE, imageFile.length());
             image_cv.put(MediaStore.Images.Media.DATA, imageFile.getAbsolutePath());
-            Uri result = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, image_cv);
+            Uri result = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, image_cv);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "Error accessing file: " + e.getMessage());
