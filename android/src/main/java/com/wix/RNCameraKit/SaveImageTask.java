@@ -156,7 +156,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             out.close();
 
             ContentValues image_cv = new ContentValues();
-            image_cv.put(MediaStore.Images.Media.TITLE, "Sosyal Doku");
+            image_cv.put(MediaStore.Images.Media.TITLE, "SosyalDoku");
             image_cv.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
             image_cv.put(MediaStore.Images.Media.DESCRIPTION, "Saha Tespit Belgesi");
             image_cv.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
