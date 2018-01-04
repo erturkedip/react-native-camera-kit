@@ -278,7 +278,7 @@ export default class CameraScreenBase extends Component {
 
     async onCaptureImagePressed() {
         const shouldSaveToCameraRoll = this.props.shouldSaveToCameraRoll;
-        const fileName = this.props.fileName.endsWith('.jpg') ? this.props.fileName : this.props.fileName.endsWith('.png') ? this.props.fileName.replace('.png', '.jpg') : this.props.fileName + '.jpg';
+        const fileName = this.props.fileName.endsWith('.jpg') ? this.props.fileName : this.props.fileName.endsWith('.png') ? this.props.fileName.replace('.png', '.jpg') : this.props.fileName + Date.now() + '.jpg';
         const path = this.props.path;
         const image = await this.camera.capture(shouldSaveToCameraRoll, fileName, path);
 
