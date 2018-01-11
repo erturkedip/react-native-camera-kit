@@ -146,6 +146,8 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         }
 
         File imageFile = new File(direct.getAbsolutePath() + "/" + fileName);
+        File compressedImageFile = new File(direct.getAbsolutePath() + "/" + fileName);
+        File compressedImage = null;
 
         if (imageFile.exists()) {
             imageFile.delete();
@@ -154,16 +156,20 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         try {
             FileOutputStream out = new FileOutputStream(imageFile);
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            image = new Compressor(this.context)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .setDestinationDirectoryPath(direct.getAbsolutePath())
-                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                    .compressToBitmap(imageFile);
-
             out.flush();
             out.close();
+
+            Compressor compressor = new Compressor(this.context);
+            compressor.setMaxWidth(640);
+            compressor.setMaxHeight(480);
+            compressor.setQuality(75);
+            compressor.setDestinationDirectoryPath(direct.getAbsolutePath() + "/Compressed");
+            compressor.setCompressFormat(Bitmap.CompressFormat.WEBP);
+            compressedImage = compressor.compressToFile(imageFile);
+
+            imageFile.delete();
+
+            compressedImage.renameTo(compressedImageFile);
 
             ContentValues image_cv = new ContentValues();
             image_cv.put(MediaStore.Images.Media.TITLE, "SosyalDoku");
@@ -172,24 +178,21 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             image_cv.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
             image_cv.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
             image_cv.put(MediaStore.Images.Media.ORIENTATION, 0);
-            File parent = imageFile.getParentFile();
+            File parent = compressedImageFile.getParentFile();
             image_cv.put(MediaStore.Images.ImageColumns.BUCKET_ID, parent.toString().toLowerCase().hashCode());
             image_cv.put(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, parent.getName().toLowerCase());
-            image_cv.put(MediaStore.Images.Media.SIZE, imageFile.length());
-            image_cv.put(MediaStore.Images.Media.DATA, imageFile.getAbsolutePath());
+            image_cv.put(MediaStore.Images.Media.SIZE, compressedImageFile.length());
+            image_cv.put(MediaStore.Images.Media.DATA, compressedImageFile.getAbsolutePath());
             Uri result = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, image_cv);
-        } catch (Exception e || ) {
-            e.printStackTrace();
-            Log.d(TAG, "Error accessing file: " + e.getMessage());
-            imageFile = null;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "Error accessing file: " + e.getMessage());
             imageFile = null;
         }
 
-        return (imageFile != null) ? createImageInfo(imageFile.getAbsolutePath(), imageFile.getAbsolutePath(), fileName, imageFile.length(), image.getWidth(), image.getHeight()) : null;
+        return (compressedImageFile != null) ? createImageInfo(compressedImageFile.getAbsolutePath(), compressedImageFile.getAbsolutePath(), fileName, compressedImageFile.length(), image.getWidth(), image.getHeight()) : null;
     }
+
 
     private WritableMap saveToMediaStore(Bitmap image) {
         try {
