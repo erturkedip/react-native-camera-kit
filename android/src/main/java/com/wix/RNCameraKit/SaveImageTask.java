@@ -79,13 +79,7 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         File imageFile = new File(bitmapUrl);
         try {
             fis = new FileInputStream(imageFile);
-            //image = BitmapFactory.decodeStream(fis);
-            image = new Compressor(this)
-                    .setMaxWidth(640)
-                    .setMaxHeight(480)
-                    .setQuality(75)
-                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
-                    .compressToBitmap(imageFile);
+            image = BitmapFactory.decodeStream(fis);
             fis.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -160,6 +154,14 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         try {
             FileOutputStream out = new FileOutputStream(imageFile);
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            image = new Compressor(this.context)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(75)
+                    .setDestinationDirectoryPath(direct.getAbsolutePath())
+                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                    .compressToBitmap(imageFile);
+
             out.flush();
             out.close();
 
@@ -176,7 +178,11 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
             image_cv.put(MediaStore.Images.Media.SIZE, imageFile.length());
             image_cv.put(MediaStore.Images.Media.DATA, imageFile.getAbsolutePath());
             Uri result = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, image_cv);
-        } catch (Exception e) {
+        } catch (Exception e || ) {
+            e.printStackTrace();
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+            imageFile = null;
+        } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "Error accessing file: " + e.getMessage());
             imageFile = null;
