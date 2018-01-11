@@ -33,6 +33,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
+import id.zelory.compressor.Compressor;
+
 import static com.facebook.react.common.ReactConstants.TAG;
 
 public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
@@ -77,7 +79,13 @@ public class SaveImageTask extends AsyncTask<byte[], Void, Void> {
         File imageFile = new File(bitmapUrl);
         try {
             fis = new FileInputStream(imageFile);
-            image = BitmapFactory.decodeStream(fis);
+            //image = BitmapFactory.decodeStream(fis);
+            image = new Compressor(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(75)
+                    .setCompressFormat(Bitmap.CompressFormat.WEBP)
+                    .compressToBitmap(imageFile);
             fis.close();
         } catch (IOException e) {
             e.printStackTrace();
